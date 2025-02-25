@@ -315,9 +315,9 @@ const RelationshipChip = styled(Chip)(({ theme }) => ({
 }));
 
 // Styled components for the new design
-const AppContainer = muiStyled(Container)(({ theme }) => ({
-  paddingTop: theme.spacing(2),
-  paddingBottom: theme.spacing(2),
+const AppContainer = styled(Container)(({ theme }) => ({
+  paddingTop: theme.spacing(3),
+  paddingBottom: theme.spacing(3),
   maxHeight: "100vh",
   overflowY: "auto",
 }));
