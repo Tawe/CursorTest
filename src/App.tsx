@@ -1,81 +1,16 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Button,
-  Card,
-  CardContent,
   Container,
   Typography,
-  List,
-  ListItem,
-  ListItemText,
   Box,
-  AppBar,
-  Toolbar,
   styled,
   Grid,
   Paper,
-  Chip,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableRow,
-  Tooltip,
-  IconButton,
-  Fade,
 } from "@mui/material";
-import {
-  Casino as CasinoIcon,
-  Person,
-  Psychology,
-  Campaign,
-  FitnessCenter,
-  Info as InfoIcon,
-  ContentCopy as CopyIcon,
-  Inventory as InventoryIcon,
-  MonetizationOn as GoldIcon,
-  Groups as GroupsIcon,
-} from "@mui/icons-material";
 import { generateNPC } from "./utils/npcGenerator";
-import { NPC, Item } from "./types/npc";
+import { NPC } from "./types/npc";
 import { styled as muiStyled } from "@mui/material/styles";
-
-const StyledCard = styled(Card)(({ theme }) => ({
-  marginTop: theme.spacing(4),
-  marginBottom: theme.spacing(4),
-  backgroundColor: "#ffffff",
-  boxShadow: "0 8px 16px rgba(0, 0, 0, 0.1)",
-  borderRadius: theme.spacing(2),
-  transition: "transform 0.2s ease-in-out",
-  "&:hover": {
-    transform: "translateY(-4px)",
-  },
-}));
-
-const GenerateButton = styled(Button)(({ theme }) => ({
-  marginTop: theme.spacing(2),
-  marginBottom: theme.spacing(4),
-  padding: theme.spacing(2, 6),
-  fontSize: "1.1rem",
-  borderRadius: theme.spacing(3),
-  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-  transition: "transform 0.2s ease-in-out",
-  "&:hover": {
-    transform: "translateY(-2px)",
-    boxShadow: "0 6px 8px rgba(0, 0, 0, 0.15)",
-  },
-}));
-
-const BackstoryPaper = styled(Paper)(({ theme }) => ({
-  marginTop: theme.spacing(3),
-  marginBottom: theme.spacing(3),
-  padding: theme.spacing(3),
-  backgroundColor: "#f8f9fa",
-  borderLeft: `4px solid ${theme.palette.primary.main}`,
-  borderRadius: theme.spacing(1),
-  fontStyle: "italic",
-  position: "relative",
-}));
 
 const SectionTitle = styled(Typography)(({ theme }) => ({
   marginTop: theme.spacing(3),
@@ -88,230 +23,6 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
   "& .MuiSvgIcon-root": {
     fontSize: "1.5rem",
   },
-}));
-
-const AttributeChip = styled(Chip)(({ theme }) => ({
-  margin: theme.spacing(0.5),
-  backgroundColor: theme.palette.primary.light,
-  color: theme.palette.primary.contrastText,
-  fontWeight: 500,
-  transition: "all 0.2s ease-in-out",
-  "&:hover": {
-    backgroundColor: theme.palette.primary.main,
-    transform: "translateY(-2px)",
-  },
-}));
-
-const StatsTable = styled(Paper)(({ theme }) => ({
-  marginTop: theme.spacing(2),
-  borderRadius: theme.spacing(1),
-  overflow: "hidden",
-  "& .MuiTableCell-root": {
-    padding: theme.spacing(1.5),
-    textAlign: "center",
-    borderBottom: `1px solid ${theme.palette.divider}`,
-  },
-  "& .MuiTableCell-head": {
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.primary.contrastText,
-    fontWeight: 600,
-  },
-}));
-
-const StatCell = styled(TableCell)<{ value: number }>(({ theme, value }) => ({
-  fontWeight: "bold",
-  fontSize: "1.1rem",
-  color:
-    value >= 16
-      ? theme.palette.success.main
-      : value <= 8
-      ? theme.palette.error.main
-      : "inherit",
-  transition: "all 0.2s ease-in-out",
-  "&:hover": {
-    backgroundColor: theme.palette.action.hover,
-  },
-}));
-
-const StatBonus = ({ value }: { value: number }) => {
-  const bonus = Math.floor((value - 10) / 2);
-  return (
-    <Typography
-      variant="caption"
-      display="block"
-      color="text.secondary"
-      sx={{
-        fontWeight: 500,
-        fontSize: "0.85rem",
-      }}
-    >
-      {bonus >= 0 ? `+${bonus}` : bonus}
-    </Typography>
-  );
-};
-
-const NPCAttribute = ({
-  label,
-  value,
-  important = false,
-  tooltip = "",
-}: {
-  label: string;
-  value: string | number | string[];
-  important?: boolean;
-  tooltip?: string;
-}) => (
-  <ListItem
-    sx={{
-      transition: "background-color 0.2s ease-in-out",
-      borderRadius: 1,
-      "&:hover": {
-        backgroundColor: "rgba(0, 0, 0, 0.02)",
-      },
-    }}
-  >
-    <ListItemText
-      primary={
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <Typography
-            variant={important ? "h6" : "subtitle2"}
-            color={important ? "primary" : "textSecondary"}
-            sx={{ fontWeight: important ? 500 : 400 }}
-          >
-            {label}
-          </Typography>
-          {tooltip && (
-            <Tooltip title={tooltip} arrow>
-              <InfoIcon fontSize="small" color="action" />
-            </Tooltip>
-          )}
-        </Box>
-      }
-      secondary={
-        Array.isArray(value) ? (
-          <Box sx={{ mt: 1 }}>
-            {value.map((item, index) => (
-              <AttributeChip key={index} label={item} />
-            ))}
-          </Box>
-        ) : (
-          <Typography variant="body1" sx={{ mt: 0.5 }}>
-            {value}
-          </Typography>
-        )
-      }
-    />
-  </ListItem>
-);
-
-const InventoryItem = styled(Box)(({ theme }) => ({
-  display: "flex",
-  alignItems: "flex-start",
-  padding: theme.spacing(1),
-  borderRadius: theme.spacing(1),
-  backgroundColor: theme.palette.background.paper,
-  marginBottom: theme.spacing(1),
-  transition: "all 0.2s ease-in-out",
-  "&:hover": {
-    backgroundColor: theme.palette.action.hover,
-    transform: "translateX(4px)",
-  },
-}));
-
-const ItemQuantity = styled(Typography)(({ theme }) => ({
-  minWidth: theme.spacing(4),
-  textAlign: "center",
-  fontWeight: "bold",
-  color: theme.palette.primary.main,
-}));
-
-const ItemType = styled(Chip)(({ theme }) => ({
-  marginLeft: "auto",
-  textTransform: "capitalize",
-}));
-
-const ItemList = ({ items }: { items: Item[] }) => {
-  // Group items by type
-  const groupedItems = items.reduce((acc, item) => {
-    if (!acc[item.type]) {
-      acc[item.type] = [];
-    }
-    acc[item.type].push(item);
-    return acc;
-  }, {} as Record<string, Item[]>);
-
-  return (
-    <>
-      {Object.entries(groupedItems).map(([type, items]) => (
-        <Box key={type} sx={{ mb: 3 }}>
-          <Typography
-            variant="subtitle1"
-            color="primary"
-            sx={{ mb: 1, textTransform: "capitalize" }}
-          >
-            {type}s
-          </Typography>
-          {items.map((item, index) => (
-            <InventoryItem key={index}>
-              <ItemQuantity variant="body2">{item.quantity}×</ItemQuantity>
-              <Box sx={{ ml: 2 }}>
-                <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                  {item.name}
-                </Typography>
-                {item.description && (
-                  <Typography variant="body2" color="text.secondary">
-                    {item.description}
-                  </Typography>
-                )}
-              </Box>
-              <ItemType size="small" label={item.type} variant="outlined" />
-            </InventoryItem>
-          ))}
-        </Box>
-      ))}
-    </>
-  );
-};
-
-const FactionChip = styled(Chip)(({ theme }) => ({
-  margin: theme.spacing(0.5),
-  backgroundColor: theme.palette.secondary.light,
-  color: theme.palette.secondary.contrastText,
-  fontWeight: 500,
-  "& .MuiChip-icon": {
-    color: "inherit",
-  },
-}));
-
-const FactionCard = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(2),
-  marginBottom: theme.spacing(2),
-  backgroundColor: theme.palette.background.paper,
-  borderRadius: theme.spacing(1),
-  transition: "all 0.2s ease-in-out",
-  "&:hover": {
-    transform: "translateY(-2px)",
-    boxShadow: theme.shadows[4],
-  },
-}));
-
-const ContactCard = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(2),
-  marginBottom: theme.spacing(2),
-  backgroundColor: theme.palette.grey[50],
-  borderRadius: theme.spacing(1),
-  transition: "all 0.2s ease-in-out",
-  "&:hover": {
-    transform: "translateX(4px)",
-    backgroundColor: theme.palette.grey[100],
-  },
-}));
-
-const RelationshipChip = styled(Chip)(({ theme }) => ({
-  margin: theme.spacing(0.5),
-  backgroundColor: theme.palette.info.light,
-  color: theme.palette.info.contrastText,
-  fontWeight: 500,
 }));
 
 // Styled components for the new design
@@ -408,7 +119,7 @@ Bane (Reputation ≤ ${npc.bane.requiredNegativeReputation}): ${npc.bane.name}
     <AppContainer maxWidth="lg">
       <Grid container spacing={2}>
         {/* Header with actions */}
-        <Grid item xs={12}>
+        <Grid item xs={12} margin="auto">
           <NPCCard>
             <Grid container spacing={2} alignItems="center">
               <Grid item xs>
@@ -441,7 +152,7 @@ Bane (Reputation ≤ ${npc.bane.requiredNegativeReputation}): ${npc.bane.name}
         {npc && (
           <>
             {/* Basic Info Section */}
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={6} height="100%" margin="auto">
               <NPCCard>
                 <SectionTitle variant="h6">Basic Information</SectionTitle>
                 <Grid container spacing={2}>
@@ -477,7 +188,7 @@ Bane (Reputation ≤ ${npc.bane.requiredNegativeReputation}): ${npc.bane.name}
 
             {/* Contacts Card */}
             {npc.contacts.length > 0 && (
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={6} margin="auto">
                 <NPCCard>
                   <SectionTitle variant="h6">Notable Contacts</SectionTitle>
                   <Grid container spacing={2}>
@@ -532,7 +243,7 @@ Bane (Reputation ≤ ${npc.bane.requiredNegativeReputation}): ${npc.bane.name}
             )}
 
             {/* Stats Section */}
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={6} margin="auto">
               <NPCCard>
                 <SectionTitle variant="h6">Ability Scores</SectionTitle>
                 <Grid container spacing={1}>
@@ -554,7 +265,7 @@ Bane (Reputation ≤ ${npc.bane.requiredNegativeReputation}): ${npc.bane.name}
             </Grid>
 
             {/* Personality Section */}
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={6} margin="auto">
               <NPCCard>
                 <SectionTitle variant="h6">Personality</SectionTitle>
                 <Typography variant="subtitle2" gutterBottom>
@@ -581,7 +292,7 @@ Bane (Reputation ≤ ${npc.bane.requiredNegativeReputation}): ${npc.bane.name}
             </Grid>
 
             {/* Background Section */}
-            <Grid item xs={12}>
+            <Grid item xs={12} margin="auto">
               <NPCCard>
                 <SectionTitle variant="h6">Background</SectionTitle>
                 <Typography variant="body2" paragraph>
@@ -591,7 +302,7 @@ Bane (Reputation ≤ ${npc.bane.requiredNegativeReputation}): ${npc.bane.name}
             </Grid>
 
             {/* Reputation Effects */}
-            <Grid item xs={12}>
+            <Grid item xs={12} margin="auto">
               <NPCCard>
                 <SectionTitle variant="h6">Reputation Effects</SectionTitle>
                 <Grid container spacing={2}>

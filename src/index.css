@@ -11,3 +11,7 @@ body {
 #root {
   min-height: 100vh;
 } 
+
+.MuiGrid-item {
+    margin: auto;
+}
